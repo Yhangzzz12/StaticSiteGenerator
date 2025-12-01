@@ -11,31 +11,8 @@ def extract_title(markdown):
             break
     raise Exception("there should be ay least 1 header block")
 
-def generate_page(from_path, template_path, dest_path):
-    print(f" * {from_path} {template_path} -> {dest_path}")
-    from_file = open(from_path, "r")
-    markdown_content = from_file.read()
-    from_file.close()
-
-    template_file = open(template_path, "r")
-    template = template_file.read()
-    template_file.close()
-
-    node = markdown_to_html_node(markdown_content)
-    html = node.to_html()
-
-    title = extract_title(markdown_content)
-    template = template.replace("{{ Title }}", title)
-    template = template.replace("{{ Content }}", html)
-
-    dest_dir_path = os.path.dirname(dest_path)
-    if dest_dir_path != "":
-        os.makedirs(dest_dir_path, exist_ok=True)
-    to_file = open(dest_path, "w")
-    to_file.write(template)
-        
-    
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, root_content_dir):
+   
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, root_content_dir, basepath):
     for item in dir_path_content.iterdir():
         if item.is_file():
             text = item.read_text()
@@ -51,11 +28,13 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, roo
             title = extract_title(text)
             content_of_template_path = content_of_template_path.replace("{{ Title }}", title)
             content_of_template_path = content_of_template_path.replace("{{ Content }}", html_strings_of_item)
+            content_of_template_path = content_of_template_path.replace('href="/' , f'href="{basepath}')
+            content_of_template_path = content_of_template_path.replace('src="/' , f'src="{basepath}')
 
             new_path.write_text(content_of_template_path)
 
         elif item.is_dir():
-            generate_pages_recursive(item, template_path, dest_dir_path, root_content_dir)
+            generate_pages_recursive(item, template_path, dest_dir_path, root_content_dir, basepath)
 
 
 

@@ -2,6 +2,7 @@ import os
 import shutil
 from webpage_generator import *
 from pathlib import Path
+import sys
 ''' copies all the contents from a source directory to a destination directory (in our case, static to public)'''
 def copy_from_src_to_des(old_path, new_path):
     if os.path.isfile(old_path):
@@ -17,11 +18,13 @@ def copy_from_src_to_des(old_path, new_path):
 
 
 def main():
-    if os.path.exists("./public"):
-        shutil.rmtree("./public")
+    basepath = sys.argv[1] if len(sys.argv)>1 else "/"
 
-    copy_from_src_to_des("./static", "./public")
-    generate_pages_recursive(Path("./content"), "template.html", Path("./public"), Path("./content") )
+    if os.path.exists("./docs"):
+        shutil.rmtree("./docs")
+
+    copy_from_src_to_des("./static", "./docs")
+    generate_pages_recursive(Path("./content"), "template.html", Path("./docs"), Path("./content"), basepath )
     
     
 
