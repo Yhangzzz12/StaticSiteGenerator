@@ -31,6 +31,7 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, roo
             content_of_template_path = content_of_template_path.replace('href="/' , f'href="{basepath}')
             content_of_template_path = content_of_template_path.replace('src="/' , f'src="{basepath}')
 
+
             new_path.write_text(content_of_template_path)
 
         elif item.is_dir():
